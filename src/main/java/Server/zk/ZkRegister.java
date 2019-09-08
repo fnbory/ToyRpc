@@ -126,6 +126,11 @@ public class ZkRegister implements  Iregister{
         }
     }
 
+    /**
+     *
+     * @param service
+     */
+
     @Override
     public void subscribe(String service) {
         Assert.notNull(this.zkClient, "zkClient不能为空");

@@ -22,6 +22,8 @@ public class ResultSet {
 
     private static Map<String, Response> severMap=new ConcurrentHashMap<>(32);
 
+    private static  ConcurrentHashMap<String, ResponseFuture> responseTable=new ConcurrentHashMap<>(256);
+
     public void put(String path,Response response){
         severMap.put(path,response);
     }
@@ -30,7 +32,9 @@ public class ResultSet {
         return severMap.remove(path);
     }
 
-    private static  ConcurrentHashMap<String, ResponseFuture> responseTable=new ConcurrentHashMap<>(256);
+    public static ResponseFuture getResponseFuture(String requestId){
+        return responseTable.remove(requestId);
+    }
 
     public static  ResponseFuture putResponseFuture(String requestId,ResponseFuture future){
         ResponseFuture put=responseTable.put(requestId,future);
@@ -40,9 +44,6 @@ public class ResultSet {
         return future;
     }
 
-    public static ResponseFuture getResponseFuture(String requestId){
-        return responseTable.remove(requestId);
-    }
 
     static {
         ScheduledExecutorService service= Executors.newScheduledThreadPool(1,new MyThredFactory

@@ -51,25 +51,28 @@ public class ServiceAnnotationProcessor implements BeanDefinitionRegistryPostPro
         this.packages = packages;
     }
 
-    @Override
-    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
-        this.registry=beanDefinitionRegistry;
-        if(StringUtils.hasText(environment.getProperty("port"))){
-            BeanDefinitionBuilder builder=BeanDefinitionBuilder.rootBeanDefinition(PortBean.class);
-            builder.addPropertyValue("port",environment.getProperty("port","12345"));
-            registry.registerBeanDefinition("portbean",builder.getBeanDefinition());
+    /**
+     * 获得包列表
+     * @param packages
+     * @return
+     */
+
+    private Set<String> resolvePackageToScan(Set<String> packages) {
+        Set<String> resolvePackagesToScan=new LinkedHashSet<>(packages.size());
+        for(String Apackage:packages){
+            if(StringUtils.hasText(Apackage)){
+                String resolvePackage=environment.resolvePlaceholders(Apackage.trim());
+                resolvePackagesToScan.add(resolvePackage);
+            }
         }
-
-        BeanDefinitionBuilder registryBean=BeanDefinitionBuilder.rootBeanDefinition(AddressBean.class);
-        registryBean.addPropertyValue("address",environment.getProperty("registry.address","127.0.0.1:2181"));
-        registry.registerBeanDefinition("addressBean",registryBean.getBeanDefinition());
-
-        Set<String> resolvedPackageToScan=resolvePackageToScan(packages);
-        if(!CollectionUtils.isEmpty(resolvedPackageToScan)){
-            registerServiceBeans(resolvedPackageToScan,registry);
-        }
-
+        return resolvePackagesToScan;
     }
+
+    /**
+     * 注册服务到zookeeper
+     * @param resolvedPackageToScan
+     * @param registry
+     */
 
     private void registerServiceBeans(Set<String> resolvedPackageToScan, BeanDefinitionRegistry registry) {
         ClassPathBeanDefinitionScanner scanner=new ClassPathBeanDefinitionScanner(registry,true,
@@ -102,7 +105,6 @@ public class ServiceAnnotationProcessor implements BeanDefinitionRegistryPostPro
         if(check(beanName,serviceBeanDefination)){
             registry.registerBeanDefinition(beanName,serviceBeanDefination);
         }
-
     }
 
     private boolean check(String beanName, AbstractBeanDefinition serviceBeanDefination) {
@@ -118,6 +120,37 @@ public class ServiceAnnotationProcessor implements BeanDefinitionRegistryPostPro
                 "' for bean class [" + serviceBeanDefination.getBeanClassName() + "] conflicts with existing, " +
                 "non-compatible bean definition of same name and class [" + existingDef.getBeanClassName() + "]");
     }
+
+    /**
+     * 动态添加bean
+     * @param beanDefinitionRegistry
+     * @throws BeansException
+     */
+
+    @Override
+    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry beanDefinitionRegistry) throws BeansException {
+        this.registry=beanDefinitionRegistry;
+        if(StringUtils.hasText(environment.getProperty("myrpc.port"))){
+            BeanDefinitionBuilder builder=BeanDefinitionBuilder.rootBeanDefinition(PortBean.class);
+            //  environment根据配置来读取相应值
+            builder.addPropertyValue("port",environment.getProperty("myrpc.port","12345"));
+            registry.registerBeanDefinition("portbean",builder.getBeanDefinition());
+        }
+
+        BeanDefinitionBuilder registryBean=BeanDefinitionBuilder.rootBeanDefinition(AddressBean.class);
+        registryBean.addPropertyValue("address",environment.getProperty("registry.address","127.0.0.1:2181"));
+        registry.registerBeanDefinition("addressBean",registryBean.getBeanDefinition());
+
+
+
+        Set<String> resolvedPackageToScan=resolvePackageToScan(packages);
+        if(!CollectionUtils.isEmpty(resolvedPackageToScan)){
+            registerServiceBeans(resolvedPackageToScan,registry);
+        }
+
+    }
+
+
 
     private boolean isCompatible(AbstractBeanDefinition newDefinition, BeanDefinition existingDefinition) {
         return !(existingDefinition instanceof ScannedGenericBeanDefinition) || newDefinition.getSource().equals(existingDefinition.getSource()) || newDefinition.equals(existingDefinition);
@@ -212,6 +245,12 @@ public class ServiceAnnotationProcessor implements BeanDefinitionRegistryPostPro
         return beanDefinitionHolders;
     }
 
+    /**
+     * 获得beanname生成器
+     * @param registry
+     * @return
+     */
+
     private BeanNameGenerator resolveBeanNameGenerator(BeanDefinitionRegistry registry) {
         BeanNameGenerator beanNameGenerator=null;
         if(registry instanceof SingletonBeanRegistry){
@@ -224,16 +263,6 @@ public class ServiceAnnotationProcessor implements BeanDefinitionRegistryPostPro
         return beanNameGenerator;
     }
 
-    private Set<String> resolvePackageToScan(Set<String> packages) {
-        Set<String> resolvePackagesToScan=new LinkedHashSet<>(packages.size());
-        for(String Apackage:packages){
-            if(StringUtils.hasText(Apackage)){
-                String resolvePackage=environment.resolvePlaceholders(Apackage.trim());
-                resolvePackagesToScan.add(resolvePackage);
-            }
-        }
-        return resolvePackagesToScan;
-    }
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {

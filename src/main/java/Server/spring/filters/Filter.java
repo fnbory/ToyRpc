@@ -11,4 +11,5 @@ import org.springframework.lang.Nullable;
 public interface Filter {
 
     Object filter(Request request, @Nullable Response response, FilterChain filterChain);
+
 }

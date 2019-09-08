@@ -10,4 +10,5 @@ public interface Iserialization {
 
     <T> T deSerialize(byte[] bytes,Class<T> tClass);
 
+
 }

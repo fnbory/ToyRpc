@@ -186,5 +186,4 @@ public class ReferenceAnnotationProcessor extends InstantiationAwareBeanPostProc
             return key;
         }
     }
-
 }

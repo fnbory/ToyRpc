@@ -31,7 +31,6 @@ public class ClientInvoker extends  Invoker{
     @Override
     public Object invoke() {
         Assert.notNull(request,"request 不能为空");
-
         String info=request.getProvider().buildInfo();
         AtomicReference<SocketChannel> channel=new AtomicReference<>(ChannelMap.get(info));
         Provider provider=request.getProvider();

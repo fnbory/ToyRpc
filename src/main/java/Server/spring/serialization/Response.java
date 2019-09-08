@@ -21,7 +21,7 @@ public class Response implements Serializable {
 
     private Object object;
 
-    private boolean async;
+    private Boolean async;
 
     private Throwable exception;
 

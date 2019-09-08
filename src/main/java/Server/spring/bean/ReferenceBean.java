@@ -1,5 +1,6 @@
 package Server.spring.bean;
 
+import Server.Consumer;
 import Server.Provider;
 import Server.spring.balance.LoadBalance;
 import Server.spring.filters.Filter;
@@ -8,6 +9,7 @@ import Server.spring.filters.FilterManager;
 import Server.spring.invoker.ClientInvoker;
 import Server.spring.proxy.ProviderSet;
 import Server.spring.serialization.Request;
+import Server.zk.ZkRegister;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeansException;
@@ -21,8 +23,10 @@ import org.springframework.util.CollectionUtils;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @Author: fnbory
@@ -44,7 +48,7 @@ public class ReferenceBean implements FactoryBean, InitializingBean, Application
 
     private String loadBalance;
 
-    //private AtomicBoolean register=new AtomicBoolean(false);
+    private AtomicBoolean register=new AtomicBoolean(false);
 
     private ApplicationContext applicationContext;
 
@@ -63,8 +67,30 @@ public class ReferenceBean implements FactoryBean, InitializingBean, Application
         this.build();
     }
 
-    public void build(){
+    public void build() throws  ClassNotFoundException{
+        ZkRegister zkRegister=applicationContext.getBean(ZkRegister.class);
+        buildConsumer(zkRegister);
+        List<Provider> discovers=zkRegister.discover(this.interfaceName, this.version);
+        if (discovers == null || discovers.size() == 0) {
+            throw new RuntimeException("服务端列表[" + this.interfaceName + "--" + this.version + "]为空");
+        }
+        zkRegister.subscribe(this.interfaceName);
+        ProviderSet.put(this.interfaceName,discovers);
+        Object object= Proxy.newProxyInstance(this.getClass().getClassLoader(),new Class[]{Class.forName(this.interfaceName)},
+                new RpcInvocationHandler(this));
+        Assert.notNull(object,"代理引用不能为空");
+        this.object= object;
+    }
 
+    private void buildConsumer(ZkRegister zkRegister){
+        if(register.compareAndSet(false,true)){
+            Consumer consumer=new Consumer();
+            consumer.setHost("127.0.0.1");
+            consumer.setTimeout(this.timeout);
+            consumer.setVersion(this.version);
+            consumer.setServiceName(this.interfaceName);
+            zkRegister.registerConsumer(consumer);
+        }
     }
 
     @Override
@@ -89,6 +115,7 @@ public class ReferenceBean implements FactoryBean, InitializingBean, Application
             this.version=referenceBean.getVersion();
             loadBalance=LoadBalanceFactory.resolve(referenceBean.getLoadBalance());
         }
+
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             List<Provider> all= ProviderSet.getAll(this.className);

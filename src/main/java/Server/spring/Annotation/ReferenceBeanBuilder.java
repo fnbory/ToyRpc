@@ -66,7 +66,6 @@ public class ReferenceBeanBuilder {
                     interfaceClass = ClassUtils.resolveClassName(interfaceClassName, classLoader);
                 }
             }
-
         }
         if (interfaceClass == null) {
             interfaceClass = this.interfaceClass;

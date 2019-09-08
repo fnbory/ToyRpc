@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+
 /**
  * @Author: fnbory
  * @Date: 2019/8/23 12:41
@@ -37,7 +38,7 @@ public  class ResponseFuture {
 
     private Boolean async;
 
-    public ResponseFuture(String requestId,long timeout,Channel channel,CompletableFuture future){
+    public ResponseFuture(String requestId, long timeout, Channel channel, CompletableFuture future){
         this.requestId=requestId;
         this.timeout=timeout;
         this.processChannel=channel;
