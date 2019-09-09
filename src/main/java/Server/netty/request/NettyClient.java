@@ -2,6 +2,7 @@ package Server.netty.request;
 
 import Server.Provider;
 import Server.ResultSet;
+import Server.netty.ClientTransactionHandler;
 import Server.netty.serilize.MessageDecoder;
 import Server.netty.serilize.MessageEncoder;
 import Server.spring.serialization.Iserialization;
@@ -44,19 +45,26 @@ public class NettyClient implements Client{
     @Override
     public ChannelFuture connect(String host, Integer port) {
         Bootstrap bootstrap=new Bootstrap();
-        work=new NioEventLoopGroup(1, ResultSet.defaultThreadFactory());
-        bootstrap.group(work).channel(NioSocketChannel.class)
-                .handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        socketChannel.pipeline().addLast(new LoggingHandler())
-                                .addLast(new MessageDecoder(iserialization))
-                                .addLast(new MessageEncoder(iserialization))
-                                .addLast(new NettyConnectManageHandler())
-                                .addLast();
+        try {
+            work=new NioEventLoopGroup(1, ResultSet.defaultThreadFactory());
+            bootstrap.group(work).channel(NioSocketChannel.class)
+                    .handler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel socketChannel) throws Exception {
+                            socketChannel.pipeline().addLast(new LoggingHandler())
+                                    .addLast(new MessageDecoder(iserialization))
+                                    .addLast(new MessageEncoder(iserialization))
+                                    .addLast(new NettyConnectManageHandler())
+                                    .addLast(new ClientTransactionHandler(provider));
 
-                    }
-                }).option(ChannelOption.SO_KEEPALIVE,true);
+                        }
+                    }).option(ChannelOption.SO_KEEPALIVE,true);
+            channelFuture=bootstrap.connect(host,port).sync();
+            return channelFuture;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -72,7 +80,7 @@ public class NettyClient implements Client{
         public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise) throws Exception {
             super.connect(ctx, remoteAddress, localAddress, promise);
             if (log.isDebugEnabled()) {
-//                log.debug("CONNECT SERVER [{}]", remoteAddress.toString());
+                log.debug("CONNECT SERVER [{}]", remoteAddress.toString());
             }
         }
     }

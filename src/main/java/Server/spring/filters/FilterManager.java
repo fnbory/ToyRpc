@@ -26,7 +26,6 @@ public class FilterManager {
         return consumerFilters;
     }
 
-
     private FilterManager(){}
 
     static {

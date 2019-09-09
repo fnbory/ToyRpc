@@ -1,5 +1,7 @@
 package Server.netty;
 
+import Server.ResultSet;
+import Server.netty.request.ResponseTask;
 import Server.spring.serialization.Request;
 import Server.spring.serialization.Response;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,9 +18,9 @@ import java.util.concurrent.Executors;
  * @Author: fnbory
  * @Date: 2019/9/7 21:42
  */
-public class ServerTransactionHandler extends SimpleChannelInboundHandler {
+public class ServerTransactionHandler extends SimpleChannelInboundHandler<Serializable> {
 
-    private ExecutorService responseTask = Executors.newFixedThreadPool(10, TempResultSet.defaultThreadFactory());
+    private ExecutorService responseTask = Executors.newFixedThreadPool(10, ResultSet.defaultThreadFactory());
 
     private ApplicationContext applicationContext;
 
@@ -28,23 +30,23 @@ public class ServerTransactionHandler extends SimpleChannelInboundHandler {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-//        if (log.isInfoEnabled()) {
-//            log.info("channel active :{}", ctx.channel());
-//        }
+        if (log.isInfoEnabled()) {
+            log.info("channel active :{}", ctx.channel());
+        }
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-//        if (log.isWarnEnabled()) {
-//            log.warn("channel inactive :{}", ctx.channel());
-//        }
+        if (log.isWarnEnabled()) {
+            log.warn("channel inactive :{}", ctx.channel());
+        }
     }
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if(evt instanceof IdleStateEvent){
             IdleStateEvent e=(IdleStateEvent) evt;
-            //log.warn("channel close [{}] [{}]", e.state(), e.isFirst());
+            log.warn("channel close [{}] [{}]", e.state(), e.isFirst());
             if(e.state()== IdleState.READER_IDLE){
                 ctx.close();
             }
