@@ -8,6 +8,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import java.util.concurrent.Executors;
  * @Author: fnbory
  * @Date: 2019/9/7 21:42
  */
+@Slf4j
 public class ServerTransactionHandler extends SimpleChannelInboundHandler<Serializable> {
 
     private ExecutorService responseTask = Executors.newFixedThreadPool(10, ResultSet.defaultThreadFactory());

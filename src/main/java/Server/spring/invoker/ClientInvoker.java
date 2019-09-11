@@ -74,7 +74,7 @@ public class ClientInvoker extends  Invoker{
                 throw new RuntimeException("unknown exception");
 
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
         else{
@@ -83,7 +83,6 @@ public class ClientInvoker extends  Invoker{
                     request.getRequestId(),request.getTimeout(),channel.get(),null));
             return future;
         }
-
     }
 
     public ChannelFuture write(AtomicReference<SocketChannel> channel){

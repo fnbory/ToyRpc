@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 public class LogFilter implements  Filter {
     @Override
     public Object filter(Request request, Response response, FilterChain filterChain) {
-
+        if (log.isDebugEnabled()) {
+            log.debug("rpc请求:{}", request);
+        }
 
         return filterChain.donext(request,response);
     }

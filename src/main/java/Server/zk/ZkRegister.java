@@ -3,9 +3,11 @@ package Server.zk;
 import Server.Consumer;
 import Server.Provider;
 import Server.spring.proxy.ProviderSet;
+import Server.utils.NetUtils;
 import com.github.zkclient.ZkClient;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.NumberUtils;
@@ -20,18 +22,19 @@ import java.util.stream.Collectors;
  * @Author: fnbory
  * @Date: 2019/8/27 17:27
  */
+@Slf4j
 public class ZkRegister implements  Iregister{
 
 
-    final static  String root_path="";
+    final static  String root_path="/fnbory";
 
-    final static String root_provider="";
+    final static String root_provider="/provider";
 
-    private final static  String root_consumer="";
+    private final static  String root_consumer="/consumer";
 
-    private final static  String line="";
+    private final static  String line="/";
 
-    private final static String split="";
+    private final static String split="#A#";
 
     private final static  Integer default_session_timeout=1000;
 
@@ -49,6 +52,8 @@ public class ZkRegister implements  Iregister{
     @Setter
     private Integer connection=default_connection_timeout;
 
+
+
     public ZkRegister(String host){
         this(host,default_session_timeout,default_connection_timeout);
     }
@@ -59,7 +64,7 @@ public class ZkRegister implements  Iregister{
         assert connection>0;
         zkClient=new ZkClient(host,session,connection);
         if(!zkClient.exists(root_path)){
-            zkClient.createPersistent(root_path,"".getBytes(Charset.forName("utf-8")));
+            zkClient.createPersistent(root_path,"toyrpc root path".getBytes(Charset.forName("utf-8")));
         }
     }
 
@@ -84,7 +89,7 @@ public class ZkRegister implements  Iregister{
                 zkClient.createEphemeral(path);
             }
             else{
-                // log.warn("已经被注册")
+                 log.warn("已经被注册");
             }
         });
     }
@@ -105,6 +110,20 @@ public class ZkRegister implements  Iregister{
             throw new RuntimeException("版本号:[" + version + "]的提供者列表为空");
         }
         return result;
+    }
+
+    private Provider toProvider(String child){
+        assert child!=null;
+        String[] info=child.split(ZkRegister.split);
+        assert info.length==6;
+        Provider provider=new Provider();
+        provider.setHost(info[0]);
+        provider.setPort(Integer.valueOf(info[1]));
+        provider.setServiceName(info[2]);
+        provider.setVersion(info[3]);
+        provider.setWeight(NumberUtils.parseNumber(info[4], Integer.class));
+        provider.setSerialization(info[5]);
+        return provider;
     }
 
     @Override
@@ -136,28 +155,16 @@ public class ZkRegister implements  Iregister{
         Assert.notNull(this.zkClient, "zkClient不能为空");
         String finalPath = root_path + line + service + root_provider;
         this.zkClient.subscribeChildChanges(finalPath, (parent, children) -> {
-            //log.info("notify {} about subscribe server:{},provider list:{}", NetUtils.getLocalHost(), service, children);
+            log.info("notify {} about subscribe server:{},provider list:{}", NetUtils.getLocalHost(), service, children);
             List<Provider> all = ProviderSet.getAll(service);
             List<Provider> collect = children.stream().map(this::toProvider).collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(all) && all.equals(collect)) {
-                //log.debug("提供者没有变更");
+                log.debug("提供者没有变更");
             } else {
                 ProviderSet.reset(service, collect);
             }
         });
     }
 
-    private Provider toProvider(String child){
-        assert child!=null;
-        String[] info=child.split(ZkRegister.split);
-        assert info.length==6;
-        Provider provider=new Provider();
-        provider.setHost(info[0]);
-        provider.setPort(Integer.valueOf(info[1]));
-        provider.setServiceName(info[2]);
-        provider.setVersion(info[3]);
-        provider.setWeight(NumberUtils.parseNumber(info[4], Integer.class));
-        provider.setSerialization(info[5]);
-        return provider;
-    }
+
 }

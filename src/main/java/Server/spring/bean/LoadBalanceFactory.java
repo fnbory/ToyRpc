@@ -1,12 +1,14 @@
 package Server.spring.bean;
 
 import Server.spring.balance.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
 /**
  * @Author: fnbory
  * @Date: 2019/8/19 17:06
  */
+@Slf4j
 public class LoadBalanceFactory {
 
     private LoadBalanceFactory(){}
@@ -33,7 +35,7 @@ public class LoadBalanceFactory {
                 finalBalance=new WeightRoundRobin();
                 break;
             default:
-                // log.warn("未知的负载均衡算法");
+                log.warn("未知的负载均衡算法");
                 finalBalance=new RoundRobin();
         }
         return finalBalance;
