@@ -10,7 +10,7 @@ public class MyThredFactory extends DefaultManagedAwareThreadFactory {
 
     public MyThredFactory(){
         this.setDaemon(true);
-        this.setThreadNamePrefix("my-rpc-");
+        this.setThreadNamePrefix("toy-rpc-");
     }
 
     public MyThredFactory(String name){

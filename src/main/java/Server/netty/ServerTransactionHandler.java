@@ -4,6 +4,7 @@ import Server.ResultSet;
 import Server.netty.request.ResponseTask;
 import Server.spring.serialization.Request;
 import Server.spring.serialization.Response;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
@@ -20,6 +21,7 @@ import java.util.concurrent.Executors;
  * @Date: 2019/9/7 21:42
  */
 @Slf4j
+@ChannelHandler.Sharable
 public class ServerTransactionHandler extends SimpleChannelInboundHandler<Serializable> {
 
     private ExecutorService responseTask = Executors.newFixedThreadPool(10, ResultSet.defaultThreadFactory());

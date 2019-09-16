@@ -38,7 +38,11 @@ public class ProviderSet {
 
 
     public static  List<Provider> getAll(String serviceName){
-        return map.get(serviceName)==null?new ArrayList<Provider>():map.get(serviceName);
+        List<Provider> providers = map.get(serviceName);
+        if (providers == null || providers.size() == 0) {
+            return new ArrayList<>();
+        }
+        return providers;
     }
 
     public static void reset(String serviceName,List<Provider> providers){

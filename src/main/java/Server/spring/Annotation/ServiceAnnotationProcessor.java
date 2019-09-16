@@ -5,10 +5,7 @@ import Server.spring.bean.PortBean;
 import Server.spring.bean.ServiceBean;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.SingletonBeanRegistry;
+import org.springframework.beans.factory.config.*;
 import org.springframework.beans.factory.support.*;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
@@ -18,10 +15,7 @@ import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.util.*;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -133,12 +127,12 @@ public class ServiceAnnotationProcessor implements BeanDefinitionRegistryPostPro
         if(StringUtils.hasText(environment.getProperty("myrpc.port"))){
             BeanDefinitionBuilder builder=BeanDefinitionBuilder.rootBeanDefinition(PortBean.class);
             //  environment根据配置来读取相应值
-            builder.addPropertyValue("port",environment.getProperty("myrpc.port","12345"));
+            builder.addPropertyValue("port",environment.getProperty("fuck.protocol.port","12345"));
             registry.registerBeanDefinition("portbean",builder.getBeanDefinition());
         }
 
         BeanDefinitionBuilder registryBean=BeanDefinitionBuilder.rootBeanDefinition(AddressBean.class);
-        registryBean.addPropertyValue("address",environment.getProperty("registry.address","127.0.0.1:2181"));
+        registryBean.addPropertyValue("address",environment.getProperty("fuck.registry.address","127.0.0.1:2181"));
         registry.registerBeanDefinition("addressBean",registryBean.getBeanDefinition());
 
 
@@ -175,6 +169,11 @@ public class ServiceAnnotationProcessor implements BeanDefinitionRegistryPostPro
         return beanNameBuilder.toString();
     }
 
+    public static <T> T[] of(T... values) {
+        return values;
+    }
+
+
     public void addValue(BeanDefinitionBuilder builder,String propertyName,Object beanName){
         String resolveBeanName= environment.resolvePlaceholders(beanName.toString());
         builder.addPropertyValue(propertyName,resolveBeanName);
@@ -197,6 +196,18 @@ public class ServiceAnnotationProcessor implements BeanDefinitionRegistryPostPro
         addPropertyReference(builder, "register", "addressBean");
         return builder.getBeanDefinition();
     }
+
+    private ManagedList<RuntimeBeanReference> toRuntimeBeanReferences(String... beanNames) {
+        ManagedList<RuntimeBeanReference> runtimeBeanReferences = new ManagedList<>();
+        if (!ObjectUtils.isEmpty(beanNames)) {
+            for (String beanName : beanNames) {
+                String resolvedBeanName = environment.resolvePlaceholders(beanName);
+                runtimeBeanReferences.add(new RuntimeBeanReference(resolvedBeanName));
+            }
+        }
+        return runtimeBeanReferences;
+    }
+
 
     private Class resolveInterfaceClass(Class annotateServicedBeanClass, Service service) {
         Class interfaceClass=service.interfaceClass();

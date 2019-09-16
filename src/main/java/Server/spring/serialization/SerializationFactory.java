@@ -1,27 +1,34 @@
 package Server.spring.serialization;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @Author: fnbory
  * @Date: 2019/8/23 11:55
  */
+@Slf4j
 public class SerializationFactory {
 
-    public static Iserialization  resolve(String Serialname,String service){
-        if(Serialname==null||Serialname==""){
-            Serialname="jdk";
+    private SerializationFactory() {
+        throw new RuntimeException("实例化异常");
+    }
+
+    public static Iserialization  resolve(String name,String service){
+        if(name==null||name==""){
+            name="jdk";
         }
-        // log.info("服务:{} 将使用:{}作为序列方式", service, name);
+        log.info("服务:{} 将使用:{}作为序列方式", service,name );
         Iserialization iserialization=null;
-        switch (Serialname){
+        switch (name){
             case "proto":
-              //  iserialization=new Proto;
+                //iserialization=new Proto;
                 break;
             case "jdk":
-              //  iserialization = new JavaSerialize();
+                iserialization = new JavaSerialize();
                 break;
             default:
-                //log.warn("未知的序列化方式:{}，使用jdk作为默认序列化方式", name);
-                //iserialization = new JavaSerialize();
+                log.warn("未知的序列化方式:{}，使用jdk作为默认序列化方式", name);
+                iserialization = new JavaSerialize();
         }
         return iserialization;
 

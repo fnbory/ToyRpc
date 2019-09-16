@@ -46,7 +46,7 @@ public class ResponseTask implements  Runnable {
         if(object instanceof  Throwable){
             response.setObject(null);
             response.setException((Throwable) object);
-            channelHandlerContext.writeAndFlush(response);
         }
+        channelHandlerContext.writeAndFlush(response);
     }
 }

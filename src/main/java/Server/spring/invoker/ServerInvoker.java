@@ -2,7 +2,6 @@ package Server.spring.invoker;
 
 import Server.netty.cache.ServiceCache;
 import Server.spring.serialization.Request;
-import com.sun.xml.internal.ws.util.CompletedFuture;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -38,7 +37,7 @@ public class ServerInvoker extends  Invoker {
             }
             Method method=service.getClass().getDeclaredMethod(methodName,parameters);
             Object invoke=method.invoke(service,args);
-            if(invoke instanceof CompletedFuture){
+            if(invoke instanceof CompletableFuture){
                 CompletableFuture future= (CompletableFuture) invoke;
                 Object o=future.get();
                 System.out.println("次数"+atomicInteger.getAndIncrement());

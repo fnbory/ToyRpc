@@ -2,13 +2,15 @@ package Server.spring.invoker;
 
 
 import Server.spring.serialization.Request;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @Author: fnbory
  * @Date: 2019/8/20 17:10
  */
-@Data
+@Getter
+@Setter
 public  abstract class Invoker {
 
     protected Request request;

@@ -52,7 +52,7 @@ public class ClientInvoker extends  Invoker{
                 throw new RuntimeException("连接远程服务中断");
             }
             if(channel.get()==null){
-                throw new RuntimeException("\"链接远程服务\" + provider.getHost() + \":\" + provider.getPort() + \"失败\"");
+                throw new RuntimeException("链接远程服务" + provider.getHost() + ":" + provider.getPort() + "失败");
             }
         }
         write(channel);

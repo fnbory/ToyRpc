@@ -9,6 +9,7 @@ import Server.spring.filters.FilterManager;
 import Server.spring.invoker.ClientInvoker;
 import Server.spring.proxy.ProviderSet;
 import Server.spring.serialization.Request;
+import Server.utils.NetUtils;
 import Server.zk.ZkRegister;
 import lombok.Getter;
 import lombok.Setter;
@@ -85,7 +86,7 @@ public class ReferenceBean implements FactoryBean, InitializingBean, Application
     private void buildConsumer(ZkRegister zkRegister){
         if(register.compareAndSet(false,true)){
             Consumer consumer=new Consumer();
-            consumer.setHost("127.0.0.1");
+            consumer.setHost(NetUtils.getLocalHost());
             consumer.setTimeout(this.timeout);
             consumer.setVersion(this.version);
             consumer.setServiceName(this.interfaceName);

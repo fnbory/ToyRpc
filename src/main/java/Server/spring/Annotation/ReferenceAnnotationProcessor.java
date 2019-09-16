@@ -72,7 +72,13 @@ public class ReferenceAnnotationProcessor extends InstantiationAwareBeanPostProc
         return elements;
     }
 
-
+    /**
+     * 获取引用元数据
+     * @param beanName
+     * @param clazz
+     * @param pvs
+     * @return
+     */
     private InjectionMetadata findReferenceMetadata(String beanName, Class<?> clazz, PropertyValues pvs) {
         // Fall back to class name as cache key, for backwards compatibility with custom callers.
         String cacheKey = (StringUtils.hasLength(beanName) ? beanName : clazz.getName());
@@ -127,7 +133,7 @@ public class ReferenceAnnotationProcessor extends InstantiationAwareBeanPostProc
         return LOWEST_PRECEDENCE;
     }
 
-    private class ReferenceInjectionMetadata extends InjectionMetadata{
+    private static  class ReferenceInjectionMetadata extends InjectionMetadata{
 
         @Getter
         private final Collection<ReferenceFieldElement> fieldElements;
@@ -136,15 +142,21 @@ public class ReferenceAnnotationProcessor extends InstantiationAwareBeanPostProc
             super(targetClass,combine(fieldElements));
             this.fieldElements=fieldElements;
         }
+
+        private static <T> Collection<T> combine(Collection<? extends T>... elements) {
+            List<T> allenelemts=new ArrayList<>();
+            for(Collection<? extends T> e:elements){
+                allenelemts.addAll(e);
+            }
+            return allenelemts;
+        }
+
+        public Collection<ReferenceFieldElement> getFieldElements() {
+            return fieldElements;
+        }
     }
 
-    private static <T> Collection<T> combine(Collection<? extends T>... elements) {
-        List<T> allenelemts=new ArrayList<>();
-        for(Collection<? extends T> e:elements){
-            allenelemts.addAll(e);
-        }
-        return allenelemts;
-    }
+
 
     private class ReferenceFieldElement extends InjectionMetadata.InjectedElement{
         private final Field field;

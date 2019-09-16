@@ -8,7 +8,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.util.concurrent.CompleteFuture;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 
@@ -48,23 +47,22 @@ public class ClientTransactionHandler extends SimpleChannelInboundHandler<Serial
             if(responseFuture==null){
                 return;
             }
-            if(response.getAsync()){
-                CompletableFuture future=responseFuture.getFuture();
-                if(future!=null){
-                    if(response.getObject()!=null){
+            if(response.getAsync()) {
+                CompletableFuture future = responseFuture.getFuture();
+                if (future != null) {
+                    if (response.getObject() != null) {
                         future.complete(response.getObject());
-                    }
-                    else{
-                        assert  response.getException()!=null;
+                    } else {
+                        assert response.getException() != null;
                         future.completeExceptionally(response.getException());
                     }
                 }
-                else{
+            }
+            else{
                     responseFuture.putResponse(response);
                 }
             }
         }
-    }
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {

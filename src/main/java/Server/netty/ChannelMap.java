@@ -6,6 +6,7 @@ import Server.spring.serialization.Request;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @Author: fnbory
  * @Date: 2019/8/22 11:15
  */
+@Slf4j
 public class ChannelMap {
 
     private static ScheduledExecutorService HEART_SCHEDULE_SERVICE = Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory("heart"));
@@ -44,7 +46,7 @@ public class ChannelMap {
             request.setAsync(true);
             ChannelFuture write = socketChannel.writeAndFlush(request);
             write.addListener(future -> {
-                //log.info("send heart to {}", k);
+                log.info("send heart to {}", k);
                 final CompletableFuture<Object> completableFuture = new CompletableFuture<>();
                 ResultSet.putResponseFuture(request.getRequestId(), new ResponseFuture( request.getRequestId()
                         , 10,socketChannel, completableFuture));

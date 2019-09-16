@@ -5,13 +5,15 @@ import lombok.Setter;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import java.io.Serializable;
+
 /**
  * @Author: fnbory
  * @Date: 2019/8/26 14:24
  */
 @Getter
 @Setter
-public class PortBean implements FactoryBean<ProtocolPort>, InitializingBean {
+public class PortBean implements FactoryBean<ProtocolPort>, InitializingBean, Serializable {
 
     private Integer port;
 
@@ -25,7 +27,7 @@ public class PortBean implements FactoryBean<ProtocolPort>, InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        ProtocolPort protocolPort=new ProtocolPort();
+        protocolPort=new ProtocolPort();
         protocolPort.setPort(port);
     }
 

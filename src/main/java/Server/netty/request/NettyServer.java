@@ -44,8 +44,8 @@ public class NettyServer implements Server {
     }
     @Override
     public void bind(Integer port) {
-        boss=new NioEventLoopGroup();
-        work=new NioEventLoopGroup();
+        boss=new NioEventLoopGroup(1);
+        work=new NioEventLoopGroup(1);
 
         ServerBootstrap bootstrap =new ServerBootstrap();
         final ServerTransactionHandler serverTransactionHandler = new ServerTransactionHandler(this.applicationContext);
@@ -54,7 +54,8 @@ public class NettyServer implements Server {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast(new MessageDecoder(iserialization))
+                            socketChannel.pipeline()
+                                    .addLast(new MessageDecoder(iserialization))
                                     .addLast(new MessageEncoder(iserialization))
                                     .addLast(new IdleStateHandler(20,40,60))
                                     .addLast(serverTransactionHandler);

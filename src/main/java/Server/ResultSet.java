@@ -7,6 +7,7 @@ package Server;
 
 import Server.netty.future.ResponseFuture;
 import Server.spring.serialization.Response;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -15,6 +16,7 @@ import java.util.concurrent.*;
 /**
  * 从zk找到provieder列表
  */
+@Slf4j
 public class ResultSet {
     public static ThreadFactory defaultThreadFactory(){
         return new MyThredFactory();
@@ -39,7 +41,7 @@ public class ResultSet {
     public static  ResponseFuture putResponseFuture(String requestId,ResponseFuture future){
         ResponseFuture put=responseTable.put(requestId,future);
         if(put!=null){
-            //log.warn("dubplicate requestId");
+            log.warn("dubplicate requestId");
         }
         return future;
     }

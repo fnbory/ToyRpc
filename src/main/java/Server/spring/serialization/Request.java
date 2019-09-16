@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class Request {
+public class Request implements Serializable {
 
     private  String requestId;
 

@@ -51,7 +51,8 @@ public class NettyClient implements Client{
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            socketChannel.pipeline().addLast(new LoggingHandler())
+                            socketChannel.pipeline()
+                                    .addLast(new LoggingHandler())
                                     .addLast(new MessageDecoder(iserialization))
                                     .addLast(new MessageEncoder(iserialization))
                                     .addLast(new NettyConnectManageHandler())

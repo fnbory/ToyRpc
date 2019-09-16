@@ -86,6 +86,7 @@ public class ZkRegister implements  Iregister{
             String finalInfo = host + split + port + split + serviceName + split + version + split + weight + split + provider.getSerialization();
             String path=serverPath+"/"+finalInfo;
             if(!zkClient.exists(path)){
+                log.info("注册服务:{}到ZooKeeper", serverPath);
                 zkClient.createEphemeral(path);
             }
             else{
@@ -100,6 +101,7 @@ public class ZkRegister implements  Iregister{
         String serverPath=root_path+"/"+serviceName+root_provider;
         List<String> children=null;
         children=zkClient.getChildren(serverPath);
+
         if(children==null||children.size()==0){
             throw  new RuntimeException("提供者列表为空");
         }
