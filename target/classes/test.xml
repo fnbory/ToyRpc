@@ -6,6 +6,6 @@
 
         <fuck:address address="47.100.213.16:2181"/>
 
-        <fuck:reference id="test" interface="RpcTest.UserService" version="0.0.1" async="true"/>
+        <fuck:reference id="test" interface="RpcTest.service.UserService" version="0.0.1" async="true"/>
 
 </beans>

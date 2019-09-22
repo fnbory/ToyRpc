@@ -4,13 +4,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.huzhurong.top/schema/fuck http://www.huzhurong.top/schema/fuck.xsd">
 
 
-    <bean id="userService" class="RpcTest.UserServiceImpl"/>
+    <bean id="userService" class="RpcTest.service.UserServiceImpl"/>
 
     <fuck:protocol port="12345"/>
 
     <fuck:address address="47.100.213.16:2181"/>
 
 
-    <fuck:service id="uu" interface="RpcTest.UserService" version="0.0.1" ref="userService" weight="2" serialization="jdk"/>
+    <fuck:service id="uu" interface="RpcTest.service.UserService" version="0.0.1" ref="userService" weight="2" serialization="jdk"/>
 
     </beans>

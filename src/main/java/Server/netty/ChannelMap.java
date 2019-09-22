@@ -54,7 +54,4 @@ public class ChannelMap {
             });
         }), 10, 10, TimeUnit.SECONDS);
     }
-
-
-
 }

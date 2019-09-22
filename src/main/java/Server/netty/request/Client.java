@@ -8,6 +8,7 @@ import io.netty.channel.ChannelFuture;
  */
 public interface Client {
 
+
     ChannelFuture connect(String host,Integer port);
 
     void disConnect() throws InterruptedException;
