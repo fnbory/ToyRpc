@@ -6,10 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="ToyRpc" />
+        <module name="Rpc_Spring_Starter" />
+        <module name="Rpc_Core" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="Rpc_Core" target="1.8" />
+      <module name="Rpc_Spring_Starter" target="1.8" />
       <module name="ToyRpc" target="1.8" />
     </bytecodeTargetLevel>
   </component>

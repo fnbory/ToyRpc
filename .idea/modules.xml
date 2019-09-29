@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Rpc_Core/Rpc_Core.iml" filepath="$PROJECT_DIR$/Rpc_Core/Rpc_Core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Rpc_Spring_Starter/Rpc_Spring_Starter.iml" filepath="$PROJECT_DIR$/Rpc_Spring_Starter/Rpc_Spring_Starter.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/ToyRpc.iml" filepath="$PROJECT_DIR$/.idea/ToyRpc.iml" />
     </modules>
   </component>
