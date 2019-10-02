@@ -1,9 +1,9 @@
 package beanpostptocess;
 
 import annotation.RpcService;
-import config.RegistryConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import registry.ServiceRegistry;
 
 /**
  * @Author: fnbory
@@ -26,7 +26,7 @@ public class ProviderPostProcess  implements BeanPostProcessor {
         // 获取注解中的内容
         RpcService rpcService=beanClass.getAnnotation(RpcService.class);
         Class<?> interfaceClass=rpcService.interfaceClass();
-        RegistryConfig
+        ServiceRegistry.
         return bean;
     }
 

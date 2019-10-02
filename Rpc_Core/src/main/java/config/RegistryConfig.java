@@ -15,7 +15,22 @@ import registry.ServiceRegistry;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegistryConfig {
+
+
     private ServiceRegistry serviceRegistry;
 
+    private String address;
+
+    public  void init(){
+        if(serviceRegistry!=null){
+            serviceRegistry.init();
+        }
+    }
+
+    public void close(){
+        if(serviceRegistry!=null){
+            serviceRegistry.close();
+        }
+    }
 
 }
