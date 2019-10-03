@@ -1,3 +1,4 @@
+import beanpostptocess.ProviderPostProcess;
 import cluster.LoadBalancer;
 import cluster.support.AbstractLoadBalancer;
 import common.ExtentionLoader;
@@ -101,6 +102,16 @@ public class SpringAutoConfig implements InitializingBean {
                         .protocolConfig(protocolConfig)
                         .build());
 
+
+    }
+
+    @Bean
+    public ProviderPostProcess providerPostProcess(ApplicationConfig applicationConfig, ClusterConfig clusterConfig,
+                                                            ProtocolConfig protocolConfig, RegistryConfig registryConfig){
+        ProviderPostProcess providerPostProcess=new ProviderPostProcess();
+        providerPostProcess.init(applicationConfig,clusterConfig,protocolConfig,registryConfig);
+        log.info("ProviderPostProcessor init");
+        return providerPostProcess;
     }
 
 

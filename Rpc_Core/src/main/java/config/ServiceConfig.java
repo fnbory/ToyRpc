@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import protocol.api.Invoker;
 
 /**
  * @Author: fnbory
@@ -13,6 +14,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ServiceConfig {
-    private String address;
+public class ServiceConfig<T> extends AbstractConfig{
+
+    private String interfaceName;
+
+    private Class<T> interfaceClass;
+
+    private  T ref;
+    public void export() {
+        Invoker invoker=getApplicationConfig().getProxyFactoryInstance().getInvoker(ref,interfaceClass);
+        getProtocolConfig().getProtocolInstance().export(invoker,this);
+    }
 }

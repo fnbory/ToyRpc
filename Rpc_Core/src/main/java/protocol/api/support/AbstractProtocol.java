@@ -16,4 +16,13 @@ public class AbstractProtocol implements Protocol {
     public void init(GlobalConfig globalConfig){
         this.globalConfig=globalConfig;
     }
+
+    public GlobalConfig getGlobalConfig() {
+        return globalConfig;
+    }
+
+    @Override
+    public void close() {
+
+    }
 }
