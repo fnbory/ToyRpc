@@ -29,7 +29,7 @@ public class ToyProtocol extends AbstractRemoteProtocol {
     @Override
     protected Server doOpenServer() {
         ToyServer toyServer=new ToyServer();
-        toyServer.init();
+        toyServer.init(getGlobalConfig());
         toyServer.run();
         return toyServer;
     }

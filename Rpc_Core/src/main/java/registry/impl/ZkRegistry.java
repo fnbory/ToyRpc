@@ -24,7 +24,7 @@ public class ZkRegistry extends AbstractServiceRegistry {
     @Override
     public void init() {
         zkSupport = new ZkSupport();
-        zkSupport.connect(serviceConfig.getAddress());
+        zkSupport.connect(registryConfig.getAddress());
     }
 
 

@@ -10,11 +10,15 @@ public abstract class AbstractRemoteProtocol extends AbstractProtocol {
 
     private Server server;
 
+
+
     protected void openServer() {
         if (server == null) {
             server = doOpenServer();
         }
     }
+
+
 
     protected  abstract Server doOpenServer();
 

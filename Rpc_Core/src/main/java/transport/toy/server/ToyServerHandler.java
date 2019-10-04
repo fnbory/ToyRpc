@@ -3,8 +3,10 @@ package transport.toy.server;
 import common.domain.Message;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
 import transport.api.Server;
+import transport.toy.constant.ToyConstant;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -35,6 +37,31 @@ public class ToyServerHandler extends SimpleChannelInboundHandler<Message> {
             ctx.writeAndFlush(Message.PONG_MSG);
         } else if (message.getType() == REQUEST) {
             server.handleRPCRequest(message.getRpcRequest(), ctx);
+        }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        try {
+            cause.printStackTrace();
+        } finally {
+            ctx.close();
+        }
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if(evt instanceof IdleStateEvent){
+            if(timeoutCount.getAndIncrement()>= ToyConstant.HEART_BEAT_TIME_OUT_MAX_TIME){
+                ctx.close();
+                log.info("超过丢失心跳的次数阈值，关闭连接");
+            }
+            else{
+                log.info("超过规定时间服务器未收到客户端的心跳或正常信息");
+            }
+        }
+        else {
+            super.userEventTriggered(ctx, evt);
         }
     }
 }

@@ -21,7 +21,7 @@ public class ToyServer extends AbstractNettyServer {
 
     @Override
     protected ServerMessageConverter initConverter() {
-
+        return ServerMessageConverter.DEFAULT_IMPL;
     }
 
     @Override

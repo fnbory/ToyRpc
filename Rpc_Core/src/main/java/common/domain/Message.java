@@ -26,11 +26,11 @@ public class Message implements Serializable {
         this.type=type;
     }
 
-    public static Message buildRequest(RPCRequest request) {
+    public static Message buildRequest(RpcRequest request) {
         return new Message(REQUEST,request,null);
     }
 
-    public static Message buildResponse(RPCResponse response) {
+    public static Message buildResponse(RpcResponse response) {
         return new Message(RESPONSE,null,response);
     }
 

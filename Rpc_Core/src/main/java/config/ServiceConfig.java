@@ -20,6 +20,10 @@ public class ServiceConfig<T> extends AbstractConfig{
 
     private Class<T> interfaceClass;
 
+    private boolean isCallback;
+
+    private boolean isCallbackInterface;
+
     private  T ref;
     public void export() {
         Invoker invoker=getApplicationConfig().getProxyFactoryInstance().getInvoker(ref,interfaceClass);

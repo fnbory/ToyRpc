@@ -1,11 +1,9 @@
 package transport.api.support.netty;
 
+import common.domain.RpcRequest;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
@@ -14,6 +12,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import transport.api.converter.ServerMessageConverter;
 import transport.api.support.AbstractServer;
+import transport.api.support.RpcTaskRunner;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -74,5 +73,25 @@ public abstract class AbstractNettyServer extends AbstractServer {
         }
     }
 
+    @Override
+    public void handleRPCRequest(RpcRequest rpcRequest, ChannelHandlerContext ctx) {
+        // 处理RpcRequest
+        getGlobalConfig().getServerExecutor().submit(new RpcTaskRunner(ctx,rpcRequest,
+                getGlobalConfig().getProtocol().referLocalService(rpcRequest.getInterfaceName()),serverMessageConverter));
+    }
 
+    @Override
+    public void close() {
+        getGlobalConfig().getRegistryConfig().close();
+        if(workerGroup!=null){
+            workerGroup.shutdownGracefully();
+        }
+        if(bossGroup!=null){
+            bossGroup.shutdownGracefully();
+        }
+        if(channelFuture!=null){
+            channelFuture.channel().close();
+        }
+
+    }
 }

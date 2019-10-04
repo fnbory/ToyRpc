@@ -1,10 +1,12 @@
 package config;
 
 import cluster.LoadBalancer;
+import executors.api.TaskExecutor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import protocol.api.Protocol;
 import proxy.api.RpcProxyFactory;
 import serialize.api.Serializer;
 
@@ -41,6 +43,18 @@ public class GlobalConfig {
 
     public LoadBalancer getLoadBalancer() {
         return clusterConfig.getLoadBalancerInstance();
+    }
+
+    public TaskExecutor getServerExecutor(){
+        return protocolConfig.getExecutor().getServer().getExecutorInstance();
+    }
+
+    public TaskExecutor getClientExecutor(){
+        return protocolConfig.getExecutor().getClient().getExecutorInstance();
+    }
+
+    public Protocol getProtocol(){
+        return protocolConfig.getProtocolInstance();
     }
 
 }

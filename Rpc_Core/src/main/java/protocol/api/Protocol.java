@@ -14,4 +14,6 @@ public interface Protocol {
     void close();
 
     <T> void export(Invoker invoker, ServiceConfig<T> tServiceConfig);
+
+    ServiceConfig referLocalService(String interfaceName);
 }

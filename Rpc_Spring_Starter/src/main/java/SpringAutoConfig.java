@@ -90,6 +90,7 @@ public class SpringAutoConfig implements InitializingBean {
             throw new Rpcexception(ERROR_ENUM.APP_CONFIG_FILE_ERROR, "必须配置protocolConfig");
         }
         AbstractProtocol protocol=extentionloader.load(ProtocolType.class,protocolConfig.getType(), AbstractProtocol.class);
+
         protocol.init(GlobalConfig.builder()
                     .clusterConfig(clusterConfig)
                     .registryConfig(registryConfig)

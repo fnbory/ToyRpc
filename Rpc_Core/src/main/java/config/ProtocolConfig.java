@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import protocol.api.Protocol;
 
+
+
 /**
  * @Author: fnbory
  * @Date: 2019/9/30 19:42
@@ -27,6 +29,8 @@ public class ProtocolConfig {
 
     private Protocol protocolInstance;
 
+    private Executors executor;
+
     public int getPort() {
         if (port != null) {
             return port;
@@ -36,6 +40,7 @@ public class ProtocolConfig {
 
     public void close(){
         protocolInstance.close();
+        executor.close();
     }
 
 

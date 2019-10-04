@@ -1,6 +1,8 @@
 package transport.toy.codec;
 
 import common.domain.Message;
+import common.domain.RpcRequest;
+import common.domain.RpcResponse;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -31,9 +33,9 @@ public class ToyDecoder extends ByteToMessageDecoder {
             byte[] bytes = new byte[in.readableBytes()];
             in.readBytes(bytes);
             if (type == Message.REQUEST) {
-                out.add(Message.buildRequest(serializer.deserialize(bytes, RPCRequest.class)));
+                out.add(Message.buildRequest(serializer.deserialize(bytes, RpcRequest.class)));
             } else if (type == Message.RESPONSE) {
-                out.add(Message.buildResponse(serializer.deserialize(bytes, RPCResponse.class)));
+                out.add(Message.buildResponse(serializer.deserialize(bytes, RpcResponse.class)));
             }
         }
     }

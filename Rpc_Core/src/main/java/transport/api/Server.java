@@ -12,4 +12,6 @@ public interface Server {
     void run();
 
     void handleRPCRequest(RpcRequest rpcRequest, ChannelHandlerContext ctx);
+
+    void close();
 }
