@@ -1,5 +1,6 @@
 package protocol.api.support;
 
+import common.domain.RpcResponse;
 import protocol.api.InvokeParam;
 import protocol.api.Invoker;
 

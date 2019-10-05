@@ -1,5 +1,7 @@
 package protocol.api;
 
+import common.domain.RpcResponse;
+
 /**
  * @Author: fnbory
  * @Date: 2019/10/3 16:07

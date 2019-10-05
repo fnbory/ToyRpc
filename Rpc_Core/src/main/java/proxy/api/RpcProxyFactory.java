@@ -12,4 +12,5 @@ public interface RpcProxyFactory {
     <T> Invoker getInvoker(T ref, Class<T> interfaceClass);
 
 
+    <T> T createProxy(Invoker invoker);
 }

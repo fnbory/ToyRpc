@@ -6,9 +6,13 @@ package protocol.api;
  */
 public interface InvokeParam {
 
+    String getInterfaceName();
+
     String getMethodName();
 
     Class[] getParameterTypes();
 
     Object[] getParameters();
+
+    String requestId();
 }

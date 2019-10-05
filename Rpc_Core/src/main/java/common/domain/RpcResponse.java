@@ -1,5 +1,6 @@
 package common.domain;
 
+import io.netty.util.Recycler;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -16,4 +17,17 @@ public class RpcResponse implements Serializable {
     private Object result;
 
     private Throwable cause;
+
+    private Recycler.Handle handle;
+
+    public RpcResponse(Recycler.Handle handle) {
+        this.handle=handle;
+    }
+
+    public void recycle(){
+        requestId=null;
+        result=null;
+        cause=null;
+        handle.recycle(this);
+    }
 }

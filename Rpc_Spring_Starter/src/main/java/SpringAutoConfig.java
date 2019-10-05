@@ -5,13 +5,14 @@ import common.ExtentionLoader;
 import common.enumeration.*;
 import common.exception.Rpcexception;
 import config.*;
+import executors.api.TaskExecutor;
+import executors.api.support.AbstractExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import protocol.api.Protocol;
 import protocol.api.support.AbstractProtocol;
 import proxy.api.RpcProxyFactory;
 import registry.impl.ZkRegistry;
@@ -95,14 +96,31 @@ public class SpringAutoConfig implements InitializingBean {
                     .clusterConfig(clusterConfig)
                     .registryConfig(registryConfig)
                     .applicationConfig(applicationConfig)
-                    .protocolConfig(protocolConfig).build());
+                    .protocolConfig(protocolConfig)
+                    .build());
 
         protocolConfig.setProtocolInstance(protocol);
-        clusterConfig.getLoadBalancerInstance().
         ((AbstractLoadBalancer)clusterConfig.getLoadBalancerInstance()).updateGlobalConfig(GlobalConfig.builder()
                         .protocolConfig(protocolConfig)
                         .build());
 
+        Executors executors=protocolConfig.getExecutor();
+        if(executors!=null){
+            ExecutorConfig serverExecutor=executors.getServer();
+            if(serverExecutor!=null){
+                TaskExecutor executor=extentionloader.load(ExecutorType.class,serverExecutor.getType(), AbstractExecutor.class);
+                executor.init(serverExecutor.getThreads());
+                serverExecutor.setExecutorInstance(executor);
+            }
+            ExecutorConfig clientExecutor=executors.getClient();
+            if(clientExecutor!=null){
+                TaskExecutor executor=extentionloader.load(ExecutorType.class,clientExecutor.getType(),AbstractExecutor.class);
+                executor.init(clientExecutor.getThreads());
+                clientExecutor.setExecutorInstance(executor);
+            }
+        }
+        log.info("{}", protocolConfig);
+        return protocolConfig;
 
     }
 

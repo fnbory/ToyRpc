@@ -18,6 +18,18 @@ public class ExecutorConfig {
 
     private TaskExecutor executorInstance;
 
+    private String type;
+
+    private Integer threads;
+
+    private static final Integer DEFAULT_THREADS=Runtime.getRuntime().availableProcessors();
+
+    public int getThreads(){
+        if(threads!=null){
+            return threads;
+        }
+        return DEFAULT_THREADS;
+    }
 
     public void close() {
         executorInstance.close();

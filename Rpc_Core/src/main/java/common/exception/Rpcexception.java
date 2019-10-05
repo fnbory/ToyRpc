@@ -16,7 +16,12 @@ public class Rpcexception extends RuntimeException{
         this.error_enum=error_enum;
     }
 
+    public Rpcexception(Throwable cause, ERROR_ENUM errorEnum, String message, Object... args) {
+        super(PlaceHolderUtil.replace(message, args), cause);
+        this.error_enum = errorEnum;
+    }
 
-
-
+    public ERROR_ENUM getErrorEnum() {
+        return error_enum;
+    }
 }
