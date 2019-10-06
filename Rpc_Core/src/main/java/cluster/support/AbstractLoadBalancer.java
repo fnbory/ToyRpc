@@ -2,10 +2,13 @@ package cluster.support;
 
 import cluster.ClusterInvoker;
 import cluster.LoadBalancer;
+import common.domain.RpcRequest;
 import config.GlobalConfig;
 import config.ReferenceConfig;
+import lombok.extern.slf4j.Slf4j;
 import protocol.api.Invoker;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,7 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Author: fnbory
  * @Date: 2019/10/2 18:09
  */
-public class AbstractLoadBalancer implements LoadBalancer {
+@Slf4j
+public abstract class AbstractLoadBalancer implements LoadBalancer {
 
     private GlobalConfig globalConfig;
 
@@ -37,6 +41,21 @@ public class AbstractLoadBalancer implements LoadBalancer {
             }
         }
     }
+
+    @Override
+    public Invoker select(List<Invoker> invokers, RpcRequest request) {
+        if (invokers.size() == 0) {
+            log.info("select->不存在可用invoker，直接退出");
+            return null;
+        }
+        // 调整endpoint，如果某个服务器不提供该服务了，则看它是否还提供其他服务，如果都不提供了，则关闭连接
+        // 如果某个服务器还没有连接，则连接；如果已经连接，则复用
+        Invoker invoker = doSelect(invokers, request);
+        log.info("LoadBalance:{},chosen invoker:{},requestId:" + request.getRequestId(), this.getClass().getSimpleName(), invoker.getServiceURL());
+        return invoker;
+    }
+
+    protected abstract Invoker doSelect(List<Invoker> invokers, RpcRequest request);
 
     @Override
     public <T> Invoker referCluster(ReferenceConfig<T> referenceConfig) {

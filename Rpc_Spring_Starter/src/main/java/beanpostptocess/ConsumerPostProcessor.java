@@ -1,9 +1,11 @@
 package beanpostptocess;
 
 import annotation.RpcReference;
+import common.ExtentionLoader;
 import common.enumeration.ERROR_ENUM;
 import common.exception.Rpcexception;
 import config.ReferenceConfig;
+import filter.Filter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 
@@ -28,7 +30,18 @@ public class ConsumerPostProcessor extends AbstractPostProcessor {
             RpcReference reference=field.getAnnotation(RpcReference.class);
             if(reference!=null){
                 // 注入配置
-                ReferenceConfig referenceConfig=ReferenceConfig.createReferenceConfig();
+                ReferenceConfig referenceConfig=ReferenceConfig.createReferenceConfig(
+                        interfaceClass.getName(),
+                        interfaceClass,
+                        reference.async(),
+                        reference.callback(),
+                        reference.oneway(),
+                        reference.timeout(),
+                        reference.callbackMethod(),
+                        reference.callbackParamIndex(),
+                        false,
+                        ExtentionLoader.getInstance().load(Filter.class)
+                );
                 initconfig(referenceConfig);
                 try {
                     field.set(bean,referenceConfig.get());

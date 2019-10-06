@@ -6,6 +6,7 @@ import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -82,5 +83,13 @@ public class ZkSupport {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<String> getChildren(String path,Watcher watcher) throws KeeperException,InterruptedException {
+        return zookeeper.getChildren(path,watcher);
+    }
+
+    public byte[] getData(String path, Watcher watcher) throws KeeperException, InterruptedException{
+        return zookeeper.getData(path, watcher, null);
     }
 }

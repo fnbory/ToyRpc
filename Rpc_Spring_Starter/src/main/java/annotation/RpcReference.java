@@ -14,5 +14,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface RpcReference {
 
+    boolean async() default false;
+    boolean callback() default  false;
+    boolean oneway() default  false;
     long timeout() default 3000;
+    String callbackMethod() default "";
+    int callbackParamIndex() default 1;
 }

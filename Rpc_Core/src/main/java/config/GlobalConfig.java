@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import protocol.api.Protocol;
 import proxy.api.RpcProxyFactory;
+import registry.ServiceRegistry;
 import serialize.api.Serializer;
 
 /**
@@ -57,4 +58,8 @@ public class GlobalConfig {
         return protocolConfig.getProtocolInstance();
     }
 
+
+    public ServiceRegistry getServiceRegistry() {
+        return registryConfig.getServiceRegistry();
+    }
 }

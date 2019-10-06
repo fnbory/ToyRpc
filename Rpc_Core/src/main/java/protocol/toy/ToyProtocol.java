@@ -1,8 +1,10 @@
 package protocol.toy;
 
+import config.ReferenceConfig;
 import config.ServiceConfig;
 import protocol.api.Invoker;
 import protocol.api.support.AbstractRemoteProtocol;
+import registry.api.ServiceURL;
 import transport.api.Server;
 import transport.toy.server.ToyServer;
 
@@ -32,5 +34,10 @@ public class ToyProtocol extends AbstractRemoteProtocol {
         toyServer.init(getGlobalConfig());
         toyServer.run();
         return toyServer;
+    }
+
+    @Override
+    public Invoker refer(ReferenceConfig referenceConfig, ServiceURL serviceURL) {
+        ToyInvoker toyInvoker=new ToyInvoker();
     }
 }

@@ -1,6 +1,7 @@
 package protocol.api;
 
 import common.domain.RpcResponse;
+import registry.api.ServiceURL;
 
 /**
  * @Author: fnbory
@@ -14,5 +15,7 @@ public interface Invoker<T> {
 
     RpcResponse invoke(InvokeParam invokeParam);
 
+    boolean isAvailable();
 
+    ServiceURL getServiceURL();
 }

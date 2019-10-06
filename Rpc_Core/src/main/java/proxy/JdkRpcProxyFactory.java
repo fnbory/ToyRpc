@@ -15,7 +15,7 @@ public class JdkRpcProxyFactory extends AbstractProxyFactory {
 
     @Override
     protected <T> T doCreateProxy(Class interfaceClass, Invoker invoker) {
-        return Proxy.newProxyInstance(
+        return (T)Proxy.newProxyInstance(
                 invoker.interfaceClass().getClassLoader(),
                 new Class[]{interfaceClass},
                 new InvocationHandler() {
@@ -24,6 +24,6 @@ public class JdkRpcProxyFactory extends AbstractProxyFactory {
                         return JdkRpcProxyFactory.this.invokeProxyMethod(invoker,method,args);
                     }
                 }
-        )
+        );
     }
 }

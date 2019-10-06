@@ -10,8 +10,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author: fnbory
@@ -21,7 +20,7 @@ import java.util.Map;
 public class ExtentionLoader {
     private static ExtentionLoader extentionLoader=new ExtentionLoader();
 
-    private Map<String,Map<String,Map<String,Object>>> extentionMap=new HashMap<>();
+    private Map<String,Map<String,Object>> extentionMap=new HashMap<>();
 
     public static ExtentionLoader getInstance(){
         return extentionLoader;
@@ -41,10 +40,10 @@ public class ExtentionLoader {
     private void handleFile(File file) {
         log.info("开始读取文件:{}", file);
         String interfaceName=file.getName();
-        Class<?> interfaceClass = Class.forName(interfaceName);
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        String line;
         try{
+            Class<?> interfaceClass = Class.forName(interfaceName);
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
             while ((line = br.readLine()) != null) {
                 String[] kv = line.split("=");
                 if (kv.length != 2) {
@@ -77,7 +76,11 @@ public class ExtentionLoader {
     }
 
     private void register(Class<?> interfaceClass, String alias, Object instance) {
-
+        if(!extentionMap.containsKey(interfaceClass.getName())){
+            extentionMap.put(interfaceClass.getName(),new HashMap<>());
+        }
+        log.info("注册bean: interface:" + interfaceClass + ",alias:{},instance:{}", alias, instance);
+        extentionMap.get(interfaceClass.getName()).put(alias,instance);
     }
 
     public    <T> T load(Class enum_type,String type,Class<T> interfaceClass){
@@ -96,4 +99,13 @@ public class ExtentionLoader {
     }
 
 
+    public <T> List<T> load(Class<T> interfaceClass) {
+        if(!extentionMap.containsKey(interfaceClass.getName())){
+            return Collections.EMPTY_LIST;
+        }
+        Collection<Object> values=extentionMap.get(interfaceClass.getName()).values();
+        List<T> instances=new ArrayList<>();
+        values.forEach(value -> instances.add(interfaceClass.cast(value)));
+        return instances;
+    }
 }
