@@ -1,6 +1,11 @@
 package protocol.toy;
 
+import common.domain.RpcRequest;
+import common.domain.RpcResponse;
 import protocol.api.support.AbstractRemoteInvoker;
+
+import java.util.concurrent.Future;
+import java.util.function.Function;
 
 /**
  * @Author: fnbory
@@ -8,6 +13,8 @@ import protocol.api.support.AbstractRemoteInvoker;
  */
 public class ToyInvoker extends AbstractRemoteInvoker {
 
-
-
+    @Override
+    protected Function<RpcRequest, Future<RpcResponse>> getProcessor() {
+        return rpcRequest -> getClient().submit(rpcRequest);
+    }
 }

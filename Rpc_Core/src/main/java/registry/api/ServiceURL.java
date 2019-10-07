@@ -4,6 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +21,16 @@ import java.util.Map;
 public class ServiceURL {
     private String address;
     private Map<Key, List<String>> params=new HashMap<>();
+
+    public static ServiceURL DEFAULT_SERVICE_URL;
+
+    static {
+        try {
+            DEFAULT_SERVICE_URL=new ServiceURL(InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static ServiceURL parse(String data) {
         ServiceURL serviceURL=new ServiceURL();
@@ -46,6 +58,12 @@ public class ServiceURL {
     public String getAddress() {
         return address;
     }
+
+    public ServiceURL(String address){
+        this.address=address;
+    }
+
+    public ServiceURL(){}
 
     public enum Key{
 

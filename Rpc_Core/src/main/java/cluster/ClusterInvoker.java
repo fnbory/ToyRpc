@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import protocol.api.InvokeParam;
 import protocol.api.Invoker;
 import protocol.api.support.AbstractRemoteProtocol;
+import protocol.injvm.InjvmProtocol;
 import registry.api.ServiceURL;
 
 import java.util.*;
@@ -39,7 +40,7 @@ public class ClusterInvoker<T> implements Invoker<T> {
     }
 
     private void init() {
-        if (globalConfig.getProtocol() instanceof InJvmProtocol) {
+        if (globalConfig.getProtocol() instanceof InjvmProtocol) {
             addOrUpdate(ServiceURL.DEFAULT_SERVICE_URL);
         } else {
             globalConfig.getServiceRegistry().discover(interfaceName, (newServiceURLs -> {

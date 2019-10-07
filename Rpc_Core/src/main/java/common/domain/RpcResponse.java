@@ -30,4 +30,8 @@ public class RpcResponse implements Serializable {
         cause=null;
         handle.recycle(this);
     }
+
+    public boolean hasError() {
+        return cause!=null;
+    }
 }

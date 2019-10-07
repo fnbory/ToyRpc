@@ -21,6 +21,7 @@ public abstract class AbstractRemoteProtocol extends AbstractProtocol {
 
     private Map<String, Client> clients = new ConcurrentHashMap<>();
 
+    private Map<String, Object> locks = new ConcurrentHashMap<>();
 
     protected void openServer() {
         if (server == null) {
@@ -38,8 +39,23 @@ public abstract class AbstractRemoteProtocol extends AbstractProtocol {
         }
     }
 
+    public final Client initClient(ServiceURL serviceURL){
+        String address=serviceURL.getAddress();
+        locks.putIfAbsent(address,new Object());
+        synchronized (locks.get(address)){
+            if(clients.containsKey(address)){
+                return clients.get(address);
+            }
+            Client client=doInitClient(serviceURL);
+            clients.put(address,client);
+            locks.remove(address);
+            return client;
+        }
+    }
+
     protected  abstract Server doOpenServer();
 
+    protected abstract Client doInitClient(ServiceURL serviceURL);
 
     public void updateEndpointConfig(ServiceURL serviceURL) {
         if(!clients.containsKey(serviceURL.getAddress())){
